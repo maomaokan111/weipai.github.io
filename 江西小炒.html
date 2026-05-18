@@ -564,11 +564,16 @@
     let isSwiping = false;
     const detailPage = document.getElementById('detailPage');
 
+    // 检查是否在详情页
+    function isDetailPageActive() {
+      return detailPage.style.display === 'block';
+    }
+
     // 阻止浏览器默认左滑返回
     window.history.pushState(null, '', location.href);
 
     window.addEventListener('popstate', function(e) {
-      if (detailPage.classList.contains('active')) {
+      if (isDetailPageActive()) {
         window.history.pushState(null, '', location.href);
         showMainPage();
       } else {
@@ -583,7 +588,7 @@
 
     document.addEventListener('touchmove', function(e) {
       if (!isSwiping) return;
-      if (detailPage.classList.contains('active') || e.target.closest('.detail-page')) {
+      if (isDetailPageActive() || e.target.closest('.detail-page')) {
         const moveX = e.touches[0].screenX;
         // 从屏幕最左边开始右滑时阻止默认行为
         if (touchStartX <= 10 && moveX > touchStartX) {
@@ -598,7 +603,7 @@
       touchEndX = e.changedTouches[0].screenX;
       // 从屏幕最左边（<=10px）开始右滑超过80px
       if (touchStartX <= 10 && touchEndX - touchStartX > 80) {
-        if (detailPage.classList.contains('active')) {
+        if (isDetailPageActive()) {
           // 详情页右滑返回首页
           showMainPage();
         } else {
@@ -611,7 +616,7 @@
     // 详情页时激活遮罩层阻止左滑返回
     function updateTouchBlocker() {
       const blocker = document.getElementById('touchBlocker');
-      if (detailPage.classList.contains('active')) {
+      if (isDetailPageActive()) {
         blocker.style.display = 'block';
       } else {
         blocker.style.display = 'none';
