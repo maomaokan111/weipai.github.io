@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>江西小炒制作工艺 - 味派食品科技</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --primary: #E54D2E;
+      --primary-dark: #C73E22;
+      --secondary: #FFF8F5;
+      --warm-bg: #FEF6F3;
+      --gold: #F5A623;
+      --text-dark: #222222;
+      --text-medium: #444444;
+      --text-light: #888888;
+      --border: #EEEEEE;
+      --shadow: rgba(0, 0, 0, 0.08);
+    }
+    body {
+      font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--secondary);
+      color: var(--text-dark);
+      min-height: 100vh;
+    }
+    html, body {
+      overscroll-behavior: none;
+    }
+    .navbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 64px;
+      background: #fff;
+      box-shadow: 0 2px 20px var(--shadow);
+      z-index: 1001;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 40px;
+    }
+    .navbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--text-dark);
+    }
+    .navbar-brand .logo {
+      width: 40px;
+      height: 40px;
+      background: var(--primary);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 700;
+      font-size: 18px;
+    }
+    .navbar-brand .company {
+      font-size: 14px;
+      color: var(--text-light);
+    }
+    .navbar-actions span {
+      font-size: 13px;
+      color: var(--text-light);
+    }
+    .main-page { padding-top: 84px; min-height: 100vh; }
+    .hero {
+      background: linear-gradient(135deg, var(--primary) 0%, #FA6400 100%);
+      padding: 60px 40px;
+      color: #fff;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -50%; right: -10%;
+      width: 500px; height: 500px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 50%;
+    }
+    .hero h1 { font-size: 42px; font-weight: 700; margin-bottom: 12px; }
+    .hero p { font-size: 16px; opacity: 0.9; max-width: 500px; }
+    .hero .badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.2);
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 13px;
+      margin-top: 20px;
+    }
+    .cards-section { padding: 50px 40px; }
+    .section-title {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 30px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .section-title::before {
+      content: '';
+      width: 4px; height: 24px;
+      background: var(--primary);
+      border-radius: 2px;
+    }
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 24px;
+    }
+    .dish-card {
+      background: #fff;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px var(--shadow);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    .dish-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+    }
+    .dish-card-image {
+      height: 200px;
+      background: linear-gradient(135deg, var(--warm-bg) 0%, #ffe5dc 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .dish-card-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .dish-card-image .placeholder-icon {
+      font-size: 64px;
+      opacity: 0.5;
+    }
+    .dish-card-image .dish-name-overlay {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 30px 20px 15px;
+      background: linear-gradient(transparent, rgba(0,0,0,0.6));
+      color: #fff;
+    }
+    .dish-card-image .dish-name-overlay h3 { font-size: 22px; font-weight: 600; }
+    .dish-card-image .dish-name-overlay span { font-size: 12px; opacity: 0.8; }
+    .dish-card-content { padding: 20px; }
+    .dish-card-meta {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 12px;
+    }
+    .dish-card-meta .tag {
+      background: var(--warm-bg);
+      color: var(--primary);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 500;
+    }
+    .dish-card-meta .steps-count {
+      font-size: 12px;
+      color: var(--text-light);
+    }
+    .dish-card-ingredients {
+      font-size: 13px;
+      color: var(--text-light);
+      line-height: 1.6;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .dish-card-arrow {
+      position: absolute;
+      bottom: 20px; right: 20px;
+      width: 36px; height: 36px;
+      background: var(--primary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 18px;
+      transition: transform 0.3s ease;
+    }
+    .dish-card:hover .dish-card-arrow { transform: translateX(4px); }
+    .detail-page { display: none; padding-top: 64px; min-height: 100vh; }
+    .detail-page.active { display: block; }
+    .main-page.hidden { display: none; }
+    .detail-header {
+      height: 320px;
+      background: linear-gradient(135deg, var(--primary) 0%, #FA6400 100%);
+      position: relative;
+      display: flex;
+      align-items: flex-end;
+      padding: 40px;
+      color: #fff;
+    }
+    .detail-header::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="rgba(255,255,255,0.05)"/></svg>');
+      background-size: 200px;
+    }
+    .detail-header-content { position: relative; z-index: 1; }
+    .back-btn {
+      position: absolute;
+      top: 20px; left: 20px;
+      width: 44px; height: 44px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 20px;
+      cursor: pointer;
+      transition: background 0.3s;
+      border: none;
+      z-index: 10;
+    }
+    .back-btn:hover { background: rgba(255,255,255,0.3); }
+    .detail-header h1 { font-size: 48px; font-weight: 700; margin-bottom: 8px; }
+    .detail-header .subtitle { font-size: 16px; opacity: 0.9; margin-bottom: 20px; }
+    .detail-header .meta { display: flex; gap: 20px; }
+    .detail-header .meta-item {
+      background: rgba(255,255,255,0.2);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 13px;
+    }
+    .detail-content { padding: 40px; max-width: 900px; margin: 0 auto; }
+    .ingredients-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 30px;
+      margin-bottom: 30px;
+      box-shadow: 0 4px 20px var(--shadow);
+    }
+    .ingredients-card h2 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .ingredients-card h2 .icon { font-size: 24px; }
+    .ingredients-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 12px;
+    }
+    .ingredient-item {
+      background: var(--warm-bg);
+      padding: 12px 16px;
+      border-radius: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .ingredient-item .name { font-size: 14px; color: var(--text-dark); }
+    .ingredient-item .qty { font-size: 13px; color: var(--primary); font-weight: 500; }
+    .steps-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 30px;
+      box-shadow: 0 4px 20px var(--shadow);
+    }
+    .steps-card h2 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 25px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .steps-card h2 .icon { font-size: 24px; }
+    .step-item {
+      display: flex;
+      gap: 20px;
+      padding: 20px 0;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+    .step-item:last-child { border-bottom: none; }
+    .step-item::before {
+      content: '';
+      position: absolute;
+      left: 23px;
+      top: 60px;
+      bottom: -20px;
+      width: 2px;
+      background: var(--border);
+    }
+    .step-item:last-child::before { display: none; }
+    .step-number {
+      width: 48px; height: 48px;
+      min-width: 48px;
+      background: var(--primary);
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 600;
+      position: relative;
+      z-index: 1;
+    }
+    .step-content { flex: 1; padding-top: 4px; }
+    .step-content h4 { font-size: 16px; font-weight: 500; color: var(--text-dark); margin-bottom: 8px; }
+    .step-content p { font-size: 14px; color: var(--text-medium); line-height: 1.8; }
+    .footer {
+      background: var(--text-dark);
+      color: #fff;
+      padding: 30px 40px;
+      text-align: center;
+    }
+    .footer p { font-size: 13px; opacity: 0.7; }
+    .footer .company { font-size: 15px; opacity: 1; margin-bottom: 5px; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .dish-card { animation: fadeIn 0.5s ease forwards; }
+    .cards-grid .dish-card:nth-child(1) { animation-delay: 0.1s; }
+    .cards-grid .dish-card:nth-child(2) { animation-delay: 0.15s; }
+    .cards-grid .dish-card:nth-child(3) { animation-delay: 0.2s; }
+    .cards-grid .dish-card:nth-child(4) { animation-delay: 0.25s; }
+    .cards-grid .dish-card:nth-child(5) { animation-delay: 0.3s; }
+    .cards-grid .dish-card:nth-child(6) { animation-delay: 0.35s; }
+    .cards-grid .dish-card:nth-child(7) { animation-delay: 0.4s; }
+    .cards-grid .dish-card:nth-child(8) { animation-delay: 0.45s; }
+    .cards-grid .dish-card:nth-child(9) { animation-delay: 0.5s; }
+    .cards-grid .dish-card:nth-child(10) { animation-delay: 0.55s; }
+    .cards-grid .dish-card:nth-child(11) { animation-delay: 0.6s; }
+    .cards-grid .dish-card:nth-child(12) { animation-delay: 0.65s; }
+    .cards-grid .dish-card:nth-child(13) { animation-delay: 0.7s; }
+    .cards-grid .dish-card:nth-child(14) { animation-delay: 0.75s; }
+    @media (max-width: 768px) {
+      .navbar { padding: 0 20px; }
+      .hero { padding: 40px 20px; }
+      .hero h1 { font-size: 28px; }
+      .cards-section { padding: 30px 20px; }
+      .detail-header { height: 280px; padding: 30px 20px; }
+      .detail-header h1 { font-size: 32px; }
+      .detail-content { padding: 20px; }
+      .ingredients-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <a href="#" class="navbar-brand" onclick="showMainPage()">
+      <div class="logo">味</div>
+      <div>
+        <div style="font-weight: 500;">江西小炒制作工艺</div>
+        <div class="company">味派（武汉）食品科技有限公司</div>
+      </div>
+    </a>
+    <div class="navbar-actions">
+      <span>标准化 · 品质如一</span>
+    </div>
+  </nav>
+
+  <div id="touchBlocker" style="position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;touch-action:none;-webkit-touch-callout:none;display:none;"></div>
+
+  <main class="main-page" id="mainPage">
+    <div class="hero">
+      <h1>江西小炒制作工艺</h1>
+      <p>传承经典赣菜风味，标准化流程确保每一份菜品都品质如一</p>
+      <span class="badge">共 15 道特色菜品</span>
+    </div>
+
+    <section class="cards-section">
+      <h2 class="section-title">菜品列表</h2>
+      <div class="cards-grid" id="cardsGrid"></div>
+    </section>
+  </main>
+
+  <div class="detail-page" id="detailPage">
+    <div class="detail-header">
+      <button class="back-btn" onclick="showMainPage()">←</button>
+      <div class="detail-header-content">
+        <h1 id="detailTitle">菜品名称</h1>
+        <p class="subtitle" id="detailSubtitle">标准化制作工艺</p>
+        <div class="meta">
+          <span class="meta-item" id="detailStepsCount">共 N 步</span>
+          <span class="meta-item" id="detailIngredientsCount">N 种食材</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="detail-content">
+      <div class="ingredients-card">
+        <h2><span class="icon">🥘</span> 食材清单</h2>
+        <div class="ingredients-grid" id="ingredientsGrid"></div>
+      </div>
+
+      <div class="steps-card">
+        <h2><span class="icon">📝</span> 制作步骤</h2>
+        <div id="stepsList"></div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p class="company">味派（武汉）食品科技有限公司</p>
+    <p>© 2024 标准化流程 · 品质如一</p>
+  </footer>
+
+  <script>
+    const dishImages = {
+      "三杯鸡": "images/三杯鸡.webp",
+      "小炒牛肉": "images/小炒牛肉.webp",
+      "小炒花菜": "images/小炒花菜.webp",
+      "干锅肥肠": "images/干锅肥肠.webp",
+      "手撕包菜": "images/手撕包菜.webp",
+      "江西啤酒鸭": "images/江西啤酒鸭.webp",
+      "江西甲鱼": "images/江西甲鱼.webp",
+      "江西香辣鸡爪": "images/江西香辣鸡爪.webp",
+      "油浸鱼": "images/油浸鱼.webp",
+      "炒三丝": "images/炒三丝.webp",
+      "热辣牛蛙": "images/热辣牛蛙.webp",
+      "肉炒肉": "images/肉炒肉.webp",
+      "青椒炒肉": "images/青椒炒肉.webp",
+      "香辣猪脚": "images/香辣猪脚.webp",
+      "香辣鱿鱼须": "images/香辣鱿鱼须.webp"
+    };
+
+  const dishesData = [
+    {"id":"三杯鸡","name":"三杯鸡","ingredients":[{"name":"三黄鸡","qty":"560","unit":"g"},{"name":"生姜（拍姜）","qty":"30","unit":"g"},{"name":"蒜子","qty":"50","unit":"g"},{"name":"猪油","qty":"50","unit":"g"},{"name":"糯米酒","qty":"50","unit":"g"},{"name":"小炒汁（辣）","qty":"47","unit":"g"},{"name":"香菇","qty":"20","unit":"g"},{"name":"青椒","qty":"5","unit":"g"},{"name":"红椒","qty":"5","unit":"g"},{"name":"小葱","qty":"5","unit":"g"}],"steps":[{"num":1,"text":"提前准备好食材，三黄鸡切块，青红椒切菱形片"},{"num":2,"text":"下入猪油烧香后下入拍姜，蒜子炒香，下入小葱"},{"num":3,"text":"下入鸡子煸炒一下后给入酱汁，糯米酒，香菇"},{"num":4,"text":"盖上闷8分钟，4分钟时候开盖翻两下防止糊边"},{"num":5,"text":"起锅时候前下入青红椒片"}]},
+    {"id":"小炒牛肉","name":"小炒牛肉","ingredients":[{"name":"牛里脊","qty":"200","unit":"g"},{"name":"红杭椒","qty":"150","unit":"g"},{"name":"小米辣","qty":"30","unit":"g"},{"name":"泡小米辣","qty":"15","unit":"g"},{"name":"姜沫","qty":"10","unit":"g"},{"name":"蒜沫","qty":"10","unit":"g"},{"name":"菜籽油","qty":"50","unit":"g"},{"name":"小炒汁","qty":"35","unit":"g"},{"name":"水","qty":"适量","unit":"g"}],"steps":[{"num":1,"text":"提前准备好食材，牛肉逆纹理切片然后给盐，鸡蛋，生粉腌制上浆"},{"num":2,"text":"起锅烧油，油温160左右下入牛肉炒出来多余水分"},{"num":3,"text":"下入生姜蒜沫，小米辣炒出香味，在下入红杭椒炒熟"},{"num":4,"text":"加入小炒汁翻炒均匀后起锅给香菜"}]},
+    {"id":"小炒花菜","name":"小炒花菜","ingredients":[{"name":"花菜","qty":"300","unit":"g"},{"name":"五花肉","qty":"70","unit":"g"},{"name":"小米辣","qty":"25","unit":"g"},{"name":"美人椒","qty":"50","unit":"g"},{"name":"大蒜叶","qty":"10","unit":"g"},{"name":"生姜","qty":"10","unit":"g"},{"name":"蒜沫","qty":"15","unit":"g"},{"name":"江西小炒汁","qty":"50","unit":"g"},{"name":"水","qty":"120","unit":"g"},{"name":"大豆油","qty":"适量","unit":"g"}],"steps":[{"num":1,"text":"起锅烧油，油温170度左右下入花菜（大约20秒花菜断生即可）倒出锅备用"},{"num":2,"text":"下入五花肉片炒至肉片焦香，再依次下入生姜，蒜，小米辣炒香后加入花菜"},{"num":3,"text":"依次给入美人椒，后加入水烧开后加入江西小炒汁"},{"num":4,"text":"最后收汁起锅前加入大蒜叶炒匀即可"}]},
+    {"id":"干锅肥肠","name":"干锅肥肠","ingredients":[{"name":"肥肠","qty":"150","unit":"g"},{"name":"小米辣","qty":"60","unit":"g"},{"name":"蒜粒","qty":"20","unit":"g"},{"name":"姜粒","qty":"10","unit":"g"},{"name":"洋葱","qty":"70","unit":"g"},{"name":"江西米酒","qty":"10","unit":"g"},{"name":"水","qty":"50","unit":"g"},{"name":"菜籽油","qty":"50","unit":"g"},{"name":"大豆油","qty":"适量","unit":"g"},{"name":"烧菜酱","qty":"30","unit":"g"}],"steps":[{"num":1,"text":"提前准备好食材，肥肠切滚刀"},{"num":2,"text":"起锅下入菜籽油烧开，下入肥肠煸炒出油香"},{"num":3,"text":"下入生姜粒，蒜粒，小米辣，洋葱炒香"},{"num":4,"text":"下入烧菜酱翻炒一下给水，收汁后起锅"},{"num":5,"text":"肥肠加工（香料：八角：5，桂皮：5，香叶：3，辣椒王：3）"}]},
+    {"id":"手撕包菜","name":"手撕包菜","ingredients":[{"name":"包菜","qty":"300","unit":"g"},{"name":"五花肉","qty":"50","unit":"g"},{"name":"小米辣","qty":"10","unit":"g"},{"name":"小炒汁","qty":"30","unit":"g"},{"name":"猪油","qty":"20","unit":"g"},{"name":"姜沫","qty":"10","unit":"g"},{"name":"蒜沫","qty":"10","unit":"g"},{"name":"水","qty":"40","unit":"g"},{"name":"油","qty":"适量","unit":"g"}],"steps":[{"num":1,"text":"准备好食材，包菜沿着根茎撕开"},{"num":2,"text":"起锅烧油下入猪油化开以后加入五花肉片煸炒干香"},{"num":3,"text":"加入姜蒜沫小米辣炒香，下入包菜炒八成成熟以后下入小炒汁翻炒几下起锅"}]},
+    {"id":"江西啤酒鸭","name":"江西啤酒鸭","ingredients":[{"name":"麻鸭","qty":"500","unit":"g"},{"name":"生姜","qty":"30","unit":"g"},{"name":"蒜沫","qty":"15","unit":"g"},{"name":"小米辣","qty":"40","unit":"g"},{"name":"大蒜叶","qty":"15","unit":"g"},{"name":"菜籽油","qty":"45","unit":"g"},{"name":"大豆油","qty":"适量","unit":"g"},{"name":"啤酒","qty":"300","unit":"g"},{"name":"江西烧菜酱","qty":"30","unit":"g"},{"name":"江西小炒汁","qty":"30","unit":"g"}],"steps":[{"num":1,"text":"提前准备好食材，鸭子块不要太大"},{"num":2,"text":"起锅烧水，冷水下鸭子生姜片去腥，煮的过程捞起来血水浮沫，然后捞出鸭子备用"},{"num":3,"text":"起锅烧油，热锅冷油下鸭子煸炒出鸭子的油脂，表面出现焦黄"},{"num":4,"text":"下入生姜，蒜末，小米辣煸炒出香味，在下入烧菜酱，小炒汁翻炒两下"},{"num":5,"text":"倒入啤酒烧开后转小火扣上锅盖烧15~20分钟左右"},{"num":6,"text":"最后大火收汁至汤汁浓稠，起锅前加入大蒜叶翻炒均匀即可。"}]},
+    {"id":"江西甲鱼","name":"江西甲鱼","ingredients":[{"name":"小甲鱼","qty":"500","unit":"g"},{"name":"姜片","qty":"40","unit":"g"},{"name":"蒜子","qty":"20","unit":"g"},{"name":"印度辣椒王","qty":"10","unit":"g"},{"name":"白酒","qty":"20","unit":"g"},{"name":"小米辣","qty":"40","unit":"g"},{"name":"印度辣椒面","qty":"10","unit":"g"},{"name":"江西烧菜酱","qty":"25","unit":"g"},{"name":"江西小炒汁","qty":"25","unit":"g"},{"name":"猪油","qty":"20","unit":"g"},{"name":"菜籽油","qty":"20","unit":"g"},{"name":"五花肉片","qty":"50","unit":"g"},{"name":"美人椒","qty":"30","unit":"g"},{"name":"水","qty":"400","unit":"g"},{"name":"大蒜叶","qty":"10","unit":"g"},{"name":"大豆油","qty":"适量","unit":"g"}],"steps":[{"num":1,"text":"提前准备好食材，前处理甲鱼先煮水去皮，皮油脂砍出来大小一致的块状"},{"num":2,"text":"锅热下猪油，菜籽油炒香，再下入五花肉炒干煸炒出来香味后下入甲鱼炒至焦黄"},{"num":3,"text":"下入姜片，白酒去腥增香，在给入小米辣煸炒"},{"num":4,"text":"加入江西烧菜酱，江西小炒汁后给水，水开后换小火烧8~15分钟左右"},{"num":5,"text":"起锅时候再下入美人椒，印度辣椒王面，最后收汁给大蒜叶起锅"}]},
+    {"id":"江西香辣鸡爪","name":"江西香辣鸡爪","ingredients":[{"name":"鸡爪","qty":"500","unit":"g"},{"name":"生姜","qty":"30","unit":"g"},{"name":"蒜沫","qty":"60","unit":"g"},{"name":"小米辣","qty":"40","unit":"g"},{"name":"小葱段","qty":"15","unit":"g"},{"name":"二荆条辣椒面","qty":"20","unit":"g"},{"name":"美人椒","qty":"40","unit":"g"},{"name":"江西小炒汁","qty":"25","unit":"g"},{"name":"江西烧菜酱","qty":"25","unit":"g"},{"name":"开水","qty":"500","unit":"g"},{"name":"大豆油","qty":"适量","unit":"g"}],"steps":[{"num":1,"text":"提前准备好材料，鸡爪洗干净后去除指甲对半切开"},{"num":2,"text":"起锅烧水，冷水下鸡爪生姜去腥，捞出浮沫血水杂质倒出备用"},{"num":3,"text":"锅中倒入开水加入烧菜酱和小炒汁，倒入高压锅中上气以后8分钟就可以放气"},{"num":4,"text":"鸡爪和汤汁分开备用，起锅烧油下入姜，蒜，小米辣炒香然后下入鸡爪简单翻炒两下"},{"num":5,"text":"倒入鸡爪汤汁，给上美人椒后收汁汤汁浓稠，起锅时候放入葱段"}]},
+    {"id":"油浸鱼","name":"油浸鱼","ingredients":[{"name":"鲈鱼","qty":"500","unit":"g"},{"name":"油浸鱼酱","qty":"300","unit":"g"},{"name":"大豆油","qty":"适量","unit":"g"},{"name":"鲜香味粉","qty":"5","unit":"g"}],"steps":[{"num":1,"text":"提前准备好所有食材，鲈鱼清洗干净以后吸干水分给葱姜料酒水腌制15分钟"},{"num":2,"text":"起锅烧油，油温150，下入鲈鱼后关火浸泡3分钟捞出备用."},{"num":3,"text":"酱汁均匀铺再鱼面上再给干辣椒，小葱等，起锅烧油油温200浇在鱼上"},{"num":4,"text":"（也可以高油温250度左右炸至金黄捞出，口感不同）"}]},
+    {"id":"炒三丝","name":"炒三丝","ingredients":[{"name":"香干","qty":"250","unit":"g"},{"name":"香芹","qty":"30","unit":"g"},{"name":"榨菜","qty":"20","unit":"g"},{"name":"小米辣","qty":"20","unit":"g"},{"name":"美人椒","qty":"40","unit":"g"},{"name":"姜沫","qty":"5","unit":"g"},{"name":"蒜沫","qty":"10","unit":"g"},{"name":"肉丝","qty":"50","unit":"g"},{"name":"红椒丝","qty":"10","unit":"g"},{"name":"江西小炒汁","qty":"35","unit":"g"},{"name":"水","qty":"100","unit":"g"}],"steps":[{"num":1,"text":"提前准备好食材，榨菜提前泡一下水去除多余盐味，肉丝可提前腌制一下"},{"num":2,"text":"热锅冷油下肉丝煸炒成型后下入姜.蒜，小米辣 煸炒出香味"},{"num":3,"text":"下入香干煸炒，在下入榨菜和水烧开"},{"num":4,"text":"加入美人椒，香芹和小炒汁后收浓汁水起锅即可"}]},
+    {"id":"热辣牛蛙","name":"热辣牛蛙","ingredients":[{"name":"牛蛙","qty":"300","unit":"g"},{"name":"蒜粒","qty":"20","unit":"g"},{"name":"姜粒","qty":"10","unit":"g"},{"name":"小米辣","qty":"50","unit":"g"},{"name":"泡小米辣","qty":"10","unit":"g"},{"name":"大蒜叶","qty":"10","unit":"g"},{"name":"菜籽油","qty":"100","unit":"g"},{"name":"江西米酒","qty":"10","unit":"g"},{"name":"红杭椒","qty":"150","unit":"g"},{"name":"水","qty":"100","unit":"g"},{"name":"烧菜酱","qty":"25","unit":"g"},{"name":"小炒汁","qty":"25","unit":"g"}],"steps":[{"num":1,"text":"提前准备好食材，牛蛙切小块用生粉上浆备用"},{"num":2,"text":"起锅烧油下入菜籽油烧开，下入牛蛙在锅里煎一下定型"},{"num":3,"text":"下入生姜，蒜粒，小米辣，泡小米辣煸炒一下出来香味，然后给小炒汁和烧菜酱"},{"num":4,"text":"下入米酒和水烧汁浓稠后给红杭椒，然后起锅"}]},
+    {"id":"肉炒肉","name":"肉炒肉","ingredients":[{"name":"肥肉","qty":"100","unit":"g"},{"name":"前夹肉","qty":"200","unit":"g"},{"name":"小米辣","qty":"70","unit":"g"},{"name":"美人椒","qty":"100","unit":"g"},{"name":"生姜沫","qty":"15","unit":"g"},{"name":"蒜沫","qty":"30","unit":"g"},{"name":"印度辣椒面","qty":"15","unit":"g"},{"name":"豆豉","qty":"5","unit":"g"},{"name":"芹菜","qty":"50","unit":"g"},{"name":"水","qty":"120","unit":"g"},{"name":"江西小炒汁","qty":"55","unit":"g"},{"name":"大豆油","qty":"适量","unit":"g"}],"steps":[{"num":1,"text":"热锅冷油下入肥肉炒香，炒干油脂"},{"num":2,"text":"加入生姜蒜末小米辣炒香后加入豆豉，锅里加入水"},{"num":3,"text":"水开后给小炒汁，下入前夹肉烹煮30秒后依次加入美人椒，芹菜后大火收汁起锅即可"}]},
+    {"id":"青椒炒肉","name":"青椒炒肉","ingredients":[{"name":"青椒","qty":"250","unit":"g"},{"name":"五花肉片","qty":"200","unit":"g"},{"name":"小米辣","qty":"20","unit":"g"},{"name":"豆豉","qty":"3","unit":"g"},{"name":"姜沫","qty":"10","unit":"g"},{"name":"蒜沫","qty":"10","unit":"g"},{"name":"水","qty":"40","unit":"g"},{"name":"小炒汁","qty":"35","unit":"g"},{"name":"油","qty":"适量","unit":"g"}],"steps":[{"num":1,"text":"提前准备好食材，青椒切滚刀"},{"num":2,"text":"锅中水分烧干下入青椒，干炕至断生捞出备用"},{"num":3,"text":"热锅冷油下入五花肉片煸炒干香后下入小米辣，生姜蒜沫炒香"},{"num":4,"text":"下入青椒给上小炒汁后翻炒均匀起锅即可"}]},
+    {"id":"香辣猪脚","name":"香辣猪脚","ingredients":[{"name":"猪脚","qty":"1000","unit":"g"},{"name":"大蒜叶","qty":"20","unit":"g"},{"name":"烧菜酱","qty":"60","unit":"g"},{"name":"小炒汁","qty":"60","unit":"g"},{"name":"猪脚原汤","qty":"200","unit":"g"},{"name":"蒜粒","qty":"10","unit":"g"},{"name":"姜粒","qty":"10","unit":"g"},{"name":"美人椒","qty":"50","unit":"g"},{"name":"二荆条辣椒皮","qty":"10","unit":"g"},{"name":"大豆油","qty":"适量","unit":"g"}],"steps":[{"num":1,"text":"猪脚加工给烧菜酱（香料：草果：5，白芷：3，丁香：3，八角；10，桂皮：10，辣椒王：5）"},{"num":2,"text":"准备好食材，保留猪脚原汤"},{"num":3,"text":"下入猪脚原汤和猪脚，给蒜粒，姜粒给入小炒汁开大火收汁"},{"num":4,"text":"下入红杭椒，二荆条，汤汁浓稠后给大蒜叶起锅即可"}]},
+    {"id":"香辣鱿鱼须","name":"香辣鱿鱼须","ingredients":[{"name":"鱿鱼须","qty":"170","unit":"g"},{"name":"韭菜","qty":"30","unit":"g"},{"name":"小米辣","qty":"80","unit":"g"},{"name":"姜沫","qty":"10","unit":"g"},{"name":"蒜沫","qty":"10","unit":"g"},{"name":"红杭椒","qty":"80","unit":"g"},{"name":"孜然粒","qty":"4","unit":"g"},{"name":"小炒汁","qty":"20","unit":"g"},{"name":"烧菜酱","qty":"20","unit":"g"},{"name":"大豆油","qty":"适量","unit":"g"}],"steps":[{"num":1,"text":"提前准备好食材，鱿鱼须切条状大小均匀一些"},{"num":2,"text":"冷水下锅鱿鱼须去腥，水开后捞出"},{"num":3,"text":"锅中给油，下入小米辣，姜沫，蒜沫，孜然粒炒香"},{"num":4,"text":"下入鱿鱼须红杭椒炒熟，然后下入小炒汁翻炒一下起锅即可"}]}
+  ];
+
+    function showMainPage() {
+      document.getElementById('mainPage').classList.remove('hidden');
+      document.getElementById('detailPage').classList.remove('active');
+      updateTouchBlocker();
+      window.scrollTo(0, 0);
+    }
+
+    function showDetail(dishId) {
+      const dish = dishesData.find(d => d.id === dishId);
+      if (!dish) return;
+
+      document.getElementById('detailTitle').textContent = dish.name;
+      document.getElementById('detailSubtitle').textContent = '标准化制作工艺';
+      document.getElementById('detailStepsCount').textContent = `共 ${dish.steps.length} 步`;
+      document.getElementById('detailIngredientsCount').textContent = `${dish.ingredients.length} 种食材`;
+
+      const detailHeader = document.querySelector('.detail-header');
+      const imgUrl = dishImages[dish.id];
+      if (imgUrl) {
+        detailHeader.style.backgroundImage = `url(${imgUrl})`;
+        detailHeader.style.backgroundSize = 'cover';
+        detailHeader.style.backgroundPosition = 'center';
+        detailHeader.style.backgroundColor = 'rgba(0,0,0,0.4)';
+      } else {
+        detailHeader.style.backgroundImage = '';
+        detailHeader.style.backgroundColor = '';
+      }
+
+      const ingredientsGrid = document.getElementById('ingredientsGrid');
+      ingredientsGrid.innerHTML = dish.ingredients.map(ing => `
+        <div class="ingredient-item">
+          <span class="name">${ing.name}</span>
+          <span class="qty">${ing.qty}${ing.unit}</span>
+        </div>
+      `).join('');
+
+      const stepsList = document.getElementById('stepsList');
+      stepsList.innerHTML = dish.steps.map(step => `
+        <div class="step-item">
+          <div class="step-number">${step.num}</div>
+          <div class="step-content">
+            <h4>第 ${step.num} 步</h4>
+            <p>${step.text}</p>
+          </div>
+        </div>
+      `).join('');
+
+      document.getElementById('mainPage').classList.add('hidden');
+      document.getElementById('detailPage').classList.add('active');
+      updateTouchBlocker();
+      window.scrollTo(0, 0);
+    }
+
+    function renderCards() {
+      const cardsGrid = document.getElementById('cardsGrid');
+      // 调试：检查数据
+      if (!window._debugShown) {
+        window._debugShown = true;
+        alert('dishesData加载了 ' + dishesData.length + ' 道菜');
+      }
+      cardsGrid.innerHTML = dishesData.map(dish => {
+        const ingredientNames = dish.ingredients.slice(0, 4).map(i => i.name).join('、');
+        const imgUrl = dishImages[dish.id] || '';
+        return `
+          <div class="dish-card" onclick="showDetail('${dish.id}')">
+            <div class="dish-card-image">
+              ${imgUrl ? `<img src="${imgUrl}" alt="${dish.name}" loading="lazy">` : `<span class="placeholder-icon">🍳</span>`}
+              <div class="dish-name-overlay">
+                <h3>${dish.name}</h3>
+                <span>点击查看制作工艺</span>
+              </div>
+            </div>
+            <div class="dish-card-content">
+              <div class="dish-card-meta">
+                <span class="tag">${dish.steps.length} 步</span>
+                <span class="steps-count">${dish.ingredients.length} 种食材</span>
+              </div>
+              <p class="dish-card-ingredients">${ingredientNames}...</p>
+            </div>
+            <div class="dish-card-arrow">→</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    console.log('[DEBUG] renderCards called, cardsGrid children:', document.getElementById('cardsGrid').children.length);
+    renderCards();
+    console.log('[DEBUG] After renderCards, cardsGrid children:', document.getElementById('cardsGrid').children.length);
+
+    // 手机端左滑返回上一页
+    let touchStartX = 0;
+    let touchEndX = 0;
+    const detailPage = document.getElementById('detailPage');
+
+    // 阻止微信浏览器默认左滑返回
+    window.history.pushState(null, '', location.href);
+    window.addEventListener('popstate', function(e) {
+      if (detailPage.classList.contains('active')) {
+        window.history.pushState(null, '', location.href);
+        showMainPage();
+      } else {
+        window.history.pushState(null, '', location.href);
+      }
+    });
+
+    document.addEventListener('touchstart', function(e) {
+      touchStartX = e.changedTouches[0].screenX;
+    }, {passive: true});
+
+document.addEventListener('touchmove', function(e) {
+      // 详情页从左边滑动时阻止浏览器默认行为
+      if (detailPage.classList.contains('active')) {
+        const moveX = e.changedTouches[0].screenX;
+        if (touchStartX <= 5 && moveX > touchStartX) {
+          e.preventDefault();
+          return;
+        }
+      }
+      // 微信环境下统一阻止左滑返回
+      if (e.target.closest('.detail-page') || detailPage.classList.contains('active')) {
+        const moveX = e.changedTouches[0].screenX;
+        if (touchStartX <= 5) {
+          e.preventDefault();
+        }
+      }
+    }, {passive: false});
+
+    document.addEventListener('touchend', function(e) {
+      touchEndX = e.changedTouches[0].screenX;
+      // 从屏幕最左边开始右滑超过80px
+      if (touchStartX <= 5 && touchEndX - touchStartX > 80) {
+        if (detailPage.classList.contains('active')) {
+          showMainPage();
+        } else {
+          history.back();
+        }
+      }
+    }, {passive: false});
+
+    // 详情页时激活遮罩层阻止微信左滑返回
+    function updateTouchBlocker() {
+      const blocker = document.getElementById('touchBlocker');
+      if (detailPage.classList.contains('active')) {
+        blocker.style.display = 'block';
+      } else {
+        blocker.style.display = 'none';
+      }
+    }
+    // 初始检查
+    updateTouchBlocker();
+
+    // 确保首页卡片显示
+    renderCards();
+    
+    // 备用：如果卡片未出现，2秒后重试
+    setTimeout(() => {
+      const cardsGrid = document.getElementById('cardsGrid');
+      if (!cardsGrid.children.length) {
+        renderCards();
+      }
+    }, 2000);
+  </script>
+</html>
