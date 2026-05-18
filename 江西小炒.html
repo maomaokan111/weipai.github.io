@@ -26,7 +26,7 @@
       min-height: 100vh;
     }
     html, body {
-      overscroll-behavior: none;
+      overscroll-behavior-y: none;
     }
     .navbar {
       position: fixed;
@@ -34,7 +34,7 @@
       height: 64px;
       background: #fff;
       box-shadow: 0 2px 20px var(--shadow);
-      z-index: 1001;
+      z-index: 10002;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -193,8 +193,11 @@
       color: #fff;
       font-size: 18px;
       transition: transform 0.3s ease;
+      cursor: pointer;
+      z-index: 10;
     }
     .dish-card:hover .dish-card-arrow { transform: translateX(4px); }
+    .dish-card-content { position: relative; }
     .detail-page { display: none; padding-top: 64px; min-height: 100vh; }
     .detail-page.active { display: block; }
     .main-page.hidden { display: none; }
@@ -219,7 +222,7 @@
       position: absolute;
       top: 20px; left: 20px;
       width: 44px; height: 44px;
-      background: rgba(255,255,255,0.2);
+      background: rgba(0,0,0,0.5);
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -229,9 +232,9 @@
       cursor: pointer;
       transition: background 0.3s;
       border: none;
-      z-index: 10;
+      z-index: 100001;
     }
-    .back-btn:hover { background: rgba(255,255,255,0.3); }
+    .back-btn:hover { background: rgba(0,0,0,0.7); }
     .detail-header h1 { font-size: 48px; font-weight: 700; margin-bottom: 8px; }
     .detail-header .subtitle { font-size: 16px; opacity: 0.9; margin-bottom: 20px; }
     .detail-header .meta { display: flex; gap: 20px; }
@@ -364,7 +367,7 @@
 </head>
 <body>
   <nav class="navbar">
-    <a href="#" class="navbar-brand" onclick="showMainPage()">
+    <a href="#" class="navbar-brand" onclick="showMainPage(); return false;">
       <div class="logo">味</div>
       <div>
         <div style="font-weight: 500;">江西小炒制作工艺</div>
@@ -393,7 +396,7 @@
 
   <div class="detail-page" id="detailPage">
     <div class="detail-header">
-      <button class="back-btn" onclick="showMainPage()">←</button>
+      <button class="back-btn" id="backBtn">←</button>
       <div class="detail-header-content">
         <h1 id="detailTitle">菜品名称</h1>
         <p class="subtitle" id="detailSubtitle">标准化制作工艺</p>
@@ -460,8 +463,8 @@
   ];
 
     function showMainPage() {
-      document.getElementById('mainPage').classList.remove('hidden');
-      document.getElementById('detailPage').classList.remove('active');
+      document.getElementById('mainPage').style.display = 'block';
+      document.getElementById('detailPage').style.display = 'none';
       updateTouchBlocker();
       window.scrollTo(0, 0);
     }
@@ -506,24 +509,19 @@
         </div>
       `).join('');
 
-      document.getElementById('mainPage').classList.add('hidden');
-      document.getElementById('detailPage').classList.add('active');
+      document.getElementById('mainPage').style.display = 'none';
+      document.getElementById('detailPage').style.display = 'block';
       updateTouchBlocker();
       window.scrollTo(0, 0);
     }
 
     function renderCards() {
       const cardsGrid = document.getElementById('cardsGrid');
-      // 调试：检查数据
-      if (!window._debugShown) {
-        window._debugShown = true;
-        alert('dishesData加载了 ' + dishesData.length + ' 道菜');
-      }
       cardsGrid.innerHTML = dishesData.map(dish => {
         const ingredientNames = dish.ingredients.slice(0, 4).map(i => i.name).join('、');
         const imgUrl = dishImages[dish.id] || '';
         return `
-          <div class="dish-card" onclick="showDetail('${dish.id}')">
+          <div class="dish-card" data-id="${dish.id}">
             <div class="dish-card-image">
               ${imgUrl ? `<img src="${imgUrl}" alt="${dish.name}" loading="lazy">` : `<span class="placeholder-icon">🍳</span>`}
               <div class="dish-name-overlay">
@@ -544,17 +542,31 @@
       }).join('');
     }
 
-    console.log('[DEBUG] renderCards called, cardsGrid children:', document.getElementById('cardsGrid').children.length);
     renderCards();
-    console.log('[DEBUG] After renderCards, cardsGrid children:', document.getElementById('cardsGrid').children.length);
 
-    // 手机端左滑返回上一页
+    // 返回按钮点击事件
+    document.getElementById('backBtn').addEventListener('click', function() {
+      showMainPage();
+    });
+
+    // 点击卡片进入详情页（事件委托）
+    document.getElementById('cardsGrid').addEventListener('click', function(e) {
+      const card = e.target.closest('.dish-card');
+      if (card) {
+        const dishId = card.getAttribute('data-id');
+        showDetail(dishId);
+      }
+    });
+
+    // 手机端滑动返回上一页
     let touchStartX = 0;
     let touchEndX = 0;
+    let isSwiping = false;
     const detailPage = document.getElementById('detailPage');
 
-    // 阻止微信浏览器默认左滑返回
+    // 阻止浏览器默认左滑返回
     window.history.pushState(null, '', location.href);
+
     window.addEventListener('popstate', function(e) {
       if (detailPage.classList.contains('active')) {
         window.history.pushState(null, '', location.href);
@@ -565,40 +577,38 @@
     });
 
     document.addEventListener('touchstart', function(e) {
-      touchStartX = e.changedTouches[0].screenX;
+      touchStartX = e.touches[0].screenX;
+      isSwiping = true;
     }, {passive: true});
 
-document.addEventListener('touchmove', function(e) {
-      // 详情页从左边滑动时阻止浏览器默认行为
-      if (detailPage.classList.contains('active')) {
-        const moveX = e.changedTouches[0].screenX;
-        if (touchStartX <= 5 && moveX > touchStartX) {
-          e.preventDefault();
-          return;
-        }
-      }
-      // 微信环境下统一阻止左滑返回
-      if (e.target.closest('.detail-page') || detailPage.classList.contains('active')) {
-        const moveX = e.changedTouches[0].screenX;
-        if (touchStartX <= 5) {
+    document.addEventListener('touchmove', function(e) {
+      if (!isSwiping) return;
+      if (detailPage.classList.contains('active') || e.target.closest('.detail-page')) {
+        const moveX = e.touches[0].screenX;
+        // 从屏幕最左边开始右滑时阻止默认行为
+        if (touchStartX <= 10 && moveX > touchStartX) {
           e.preventDefault();
         }
       }
     }, {passive: false});
 
     document.addEventListener('touchend', function(e) {
+      if (!isSwiping) return;
+      isSwiping = false;
       touchEndX = e.changedTouches[0].screenX;
-      // 从屏幕最左边开始右滑超过80px
-      if (touchStartX <= 5 && touchEndX - touchStartX > 80) {
+      // 从屏幕最左边（<=10px）开始右滑超过80px
+      if (touchStartX <= 10 && touchEndX - touchStartX > 80) {
         if (detailPage.classList.contains('active')) {
+          // 详情页右滑返回首页
           showMainPage();
         } else {
+          // 首页右滑返回上一级（浏览器返回）
           history.back();
         }
       }
-    }, {passive: false});
+    }, {passive: true});
 
-    // 详情页时激活遮罩层阻止微信左滑返回
+    // 详情页时激活遮罩层阻止左滑返回
     function updateTouchBlocker() {
       const blocker = document.getElementById('touchBlocker');
       if (detailPage.classList.contains('active')) {
@@ -607,18 +617,9 @@ document.addEventListener('touchmove', function(e) {
         blocker.style.display = 'none';
       }
     }
-    // 初始检查
     updateTouchBlocker();
 
     // 确保首页卡片显示
     renderCards();
-    
-    // 备用：如果卡片未出现，2秒后重试
-    setTimeout(() => {
-      const cardsGrid = document.getElementById('cardsGrid');
-      if (!cardsGrid.children.length) {
-        renderCards();
-      }
-    }, 2000);
   </script>
 </html>
